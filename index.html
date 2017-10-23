@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JavaScriptで回線速度測定</title>
+  <style>
+    /* ボタンのスタイル */
+    input[type="button"] {
+        background-color: #333;
+        border: 0;
+        color: #fff;
+        cursor: pointer;
+        font-family: "Noto Sans", sans-serif;
+        padding: 0.8em 0.8em;
+    }
+    /* テスト実行中はボタンの色を変える（クリックも無効になっている） */
+    input[type="button"]:disabled {
+      background-color: rgba(51, 51, 51, 0.7);
+    }
+    .loading-area {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>JavaScriptで回線速度測定</h1>
+
+  <input id="btn-start" name="speedtest" type="button" value="測定開始">
+  <div class="loading-area" style="display:none;">
+    <img src="./loading.gif"> 測定中
+  </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript">
+/**
+ * 速度計測関数
+ */
+var speedtest = function() {
+
+  $('#btn-start').prop('disabled', true);
+  $('.loading-area').show();
+
+  var start = (new Date()).getTime();
+  jQuery.get('./test_data.bin?' + Date.now(), function(data) {
+
+    $('#btn-start').prop('disabled', false);
+    $('.loading-area').hide();
+
+    var end = (new Date()).getTime();
+    var sec = (end - start) / 1000;
+    var bytesPerSec = Math.round(data.length / sec); // data.lengthの単位はバイト
+    var size_mb = (bytesPerSec * 8 / 1000 / 1000).toFixed(2); // 8を掛けてビット単位にしている
+    swal('推定回線速度: ' + size_mb + 'M bps', 'テストが完了しました。', 'success');
+
+  });
+};
+
+// ボタンのクリックイベントに、イベントハンドラを登録する
+document.querySelector('#btn-start').addEventListener('click', function() {
+  speedtest();
+});
+
+// スペースキーでも実行したい場合はこちらも登録する
+window.addEventListener('keydown', function(event) {
+  if (event.keyCode === 32) {
+    speedtest();
+  }
+});
+
+</script>
+</body>
+</html>
