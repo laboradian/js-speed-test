@@ -54,7 +54,7 @@ var speedtest = function() {
     var end = (new Date()).getTime();
     var sec = (end - start) / 1000;
     var bytesPerSec = Math.round(data.length / sec); // data.lengthの単位はバイト
-    var size_mb = (bytesPerSec * 8 / 1000 / 1000).toFixed(2); // 8を掛けてビット単位にしている
+    var size_mb = (bytesPerSec * 8 / 1000 / 1000).toFixed(2); // 8を掛けてビット単位にしている。小数点以下2桁まで表示している。
     swal('推定回線速度: ' + size_mb + 'M bps', 'テストが完了しました。', 'success');
 
   });
