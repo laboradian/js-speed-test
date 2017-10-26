@@ -38,13 +38,20 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script type="text/javascript">
+/* 実行中フラグ */
+var running = false;
 /**
  * 速度計測関数
  */
 var speedtest = function() {
 
+  if (running) {
+    return;
+  }
+
   $('#btn-start').prop('disabled', true);
   $('.loading-area').show();
+  running = true;
 
   var start = (new Date()).getTime();
   jQuery.get('./test_data.bin?' + Date.now(), function(data) {
@@ -57,6 +64,7 @@ var speedtest = function() {
     var bytesPerSec = Math.round(data.length / sec); // data.lengthの単位はバイト
     var size_mb = (bytesPerSec * 8 / 1000 / 1000).toFixed(2); // 8を掛けてビット単位にしている。小数点以下2桁まで表示している。
     swal('推定回線速度: ' + size_mb + 'M bps', 'テストが完了しました。', 'success');
+    running = false;
 
   });
 };
